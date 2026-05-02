@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why I Built a Math App for My Kids — Tekimei Math</title>
+<meta name="description" content="A San Mateo dad explains why he spent a year building Tekimei Math — a free, structured math app for kids ages 5-12 with no ads, no accounts, and no data collection.">
+<meta property="og:title" content="Why I Built a Math App for My Kids">
+<meta property="og:description" content="After trying every math app on the App Store and finding them all lacking, I spent a year building exactly what I wanted for my own children.">
+<meta property="og:url" content="https://tekimei.com/blog/why-i-built-tekimei-math.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0E1E3A;
+    --navy-mid: #1A2F52;
+    --gold: #C9952A;
+    --gold-light: #E8B84B;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE6D6;
+    --text: #0E1E3A;
+    --text-muted: #5A6A82;
+    --white: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px clamp(20px, 5vw, 60px);
+    background: rgba(14, 30, 58, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201, 149, 42, 0.2);
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-kanji { font-family: 'Noto Serif JP', serif; font-size: 22px; color: var(--gold); line-height: 1; }
+  .nav-name { font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--white); letter-spacing: 0.02em; }
+  .nav-links { display: flex; gap: 32px; align-items: center; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold-light); }
+  .nav-cta { background: var(--gold); color: var(--navy) !important; padding: 8px 20px; border-radius: 100px; font-weight: 600 !important; }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+
+  /* ARTICLE HEADER */
+  .article-header {
+    background: var(--navy);
+    padding: 140px clamp(20px, 5vw, 60px) 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .article-header::before {
+    content: '明';
+    font-family: 'Noto Serif JP', serif;
+    font-size: 400px;
+    color: rgba(201, 149, 42, 0.05);
+    position: absolute;
+    right: -2vw; top: 50%;
+    transform: translateY(-50%);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .article-header-inner { max-width: 720px; margin: 0 auto; }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .breadcrumb a { color: var(--gold); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--gold-light); }
+  .breadcrumb span { color: rgba(255,255,255,0.3); }
+
+  .article-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(201,149,42,0.15);
+    color: var(--gold-light);
+    padding: 4px 12px; border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  .article-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .article-meta {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 13px; color: rgba(255,255,255,0.45);
+  }
+  .article-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* ARTICLE BODY */
+  .article-body {
+    padding: 72px clamp(20px, 5vw, 60px);
+  }
+  .article-body-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .article-body p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .article-body h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--navy);
+    margin: 48px 0 16px;
+    line-height: 1.2;
+  }
+
+  .article-body h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 32px 0 12px;
+  }
+
+  .article-body ul {
+    margin: 0 0 24px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .article-body ul li {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--text);
+    padding: 8px 0 8px 28px;
+    position: relative;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .article-body ul li::before {
+    content: '✓';
+    color: var(--gold);
+    font-weight: 700;
+    position: absolute;
+    left: 0;
+  }
+
+  .article-body a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201,149,42,0.3);
+    transition: border-color 0.2s;
+  }
+  .article-body a:hover { border-color: var(--gold); }
+
+  /* CALLOUT BOX */
+  .callout {
+    background: var(--navy);
+    border-radius: 20px;
+    padding: 36px 40px;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .callout::before {
+    content: '明';
+    font-family: 'Noto Serif JP', serif;
+    font-size: 140px;
+    color: rgba(201,149,42,0.06);
+    position: absolute;
+    right: -10px; bottom: -20px;
+    line-height: 1;
+  }
+  .callout h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .callout ul {
+    margin-bottom: 24px;
+    position: relative; z-index: 1;
+  }
+  .callout ul li {
+    color: rgba(255,255,255,0.75);
+    border-bottom-color: rgba(255,255,255,0.08);
+  }
+  .callout ul li::before { color: var(--gold-light); }
+  .callout a.btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700; font-size: 15px;
+    padding: 14px 28px;
+    border-radius: 100px;
+    text-decoration: none;
+    border: none;
+    transition: background 0.2s;
+    position: relative; z-index: 1;
+  }
+  .callout a.btn:hover { background: var(--gold-light); }
+
+  /* AUTHOR BOX */
+  .author-box {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 32px 36px;
+    margin: 56px 0;
+    border: 1px solid var(--cream-dark);
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .author-avatar {
+    width: 56px; height: 56px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .author-info h4 {
+    font-weight: 700; font-size: 16px;
+    color: var(--navy); margin-bottom: 4px;
+  }
+  .author-info p {
+    font-size: 14px; color: var(--text-muted);
+    line-height: 1.6; margin: 0;
+  }
+
+  /* BACK LINK */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--gold);
+    font-weight: 600; font-size: 14px;
+    text-decoration: none;
+    margin-bottom: 48px;
+    border: none;
+  }
+  .back-link:hover { color: var(--gold-light); }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy);
+    padding: 56px clamp(20px, 5vw, 60px);
+    border-top: 1px solid rgba(201,149,42,0.15);
+  }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; }
+  .footer-brand .nav-kanji { font-size: 28px; display: block; margin-bottom: 8px; }
+  .footer-brand .nav-name { font-size: 18px; display: block; margin-bottom: 12px; }
+  .footer-brand p { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.65; max-width: 280px; }
+  .footer-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a { font-size: 13px; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
+  .footer-col ul li a:hover { color: var(--white); }
+  .footer-bottom { max-width: 1100px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.3); }
+  .footer-bottom a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 12px; }
+  .footer-bottom a:hover { color: var(--white); }
+
+  @media (max-width: 768px) {
+    .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    .nav-links { display: none; }
+    .author-box { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-brand">
+    <span class="nav-kanji">明</span>
+    <span class="nav-name">Tekimei Math</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/#how">How It Works</a></li>
+    <li><a href="/#curriculum">Curriculum</a></li>
+    <li><a href="/#pricing">Pricing</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="https://apps.apple.com/us/app/tekimei-math/id6761586288" class="nav-cta">Download Free</a></li>
+  </ul>
+</nav>
+
+<!-- ARTICLE HEADER -->
+<div class="article-header">
+  <div class="article-header-inner">
+    <div class="breadcrumb">
+      <a href="/blog">Blog</a>
+      <span>›</span>
+      <span style="color:rgba(255,255,255,0.4)">Our Story</span>
+    </div>
+    <span class="article-tag">Our Story</span>
+    <h1>Why I Built a Math App for My Kids</h1>
+    <div class="article-meta">
+      <span>By Mike Chan</span>
+      <span>·</span>
+      <span>May 2, 2026</span>
+      <span>·</span>
+      <span>4 min read</span>
+    </div>
+  </div>
+</div>
+
+<!-- ARTICLE BODY -->
+<article class="article-body">
+  <div class="article-body-inner">
+
+    <p>If you've ever searched for a math app for your child, you know the problem. Most apps are either glorified flashcard drills with no structure, or they're loaded with ads, in-app purchases, and accounts that collect your child's data.</p>
+
+    <p>I'm Mike, a San Mateo dad of two kids — ages 9 and 11. After trying nearly every math app on the App Store, I decided to build my own. That app is called <strong>Tekimei Math</strong>, and it just launched — free to download.</p>
+
+    <h2>The problem with most math apps</h2>
+
+    <p>My kids needed more math practice. I knew that. So I did what every parent does — I went to the App Store and searched "math for kids."</p>
+
+    <p>What I found was frustrating. The free apps were cluttered with ads that popped up in the middle of my kids' sessions. The paid apps locked basic features behind subscriptions. Almost none of them had any real structure — they would just throw random questions at my kids without any sense of progression or mastery.</p>
+
+    <p>I wanted something that felt like a real curriculum. Something that would start where my child actually was, build systematically, and show me — and them — exactly what they had mastered. I couldn't find it. So I built it.</p>
+
+    <h2>What makes Tekimei Math different</h2>
+
+    <p>Most math apps treat every session like a random quiz. Tekimei Math is built around a structured 9-level curriculum that takes kids from basic counting all the way through algebra — in a logical, sequential order that actually builds mastery.</p>
+
+    <div class="callout">
+      <h3>What's included in Tekimei Math</h3>
+      <ul>
+        <li>9-level curriculum from counting to algebra</li>
+        <li>Mastery tracking — know exactly where your child stands</li>
+        <li>Daily streaks to build a consistent math habit</li>
+        <li>No ads. No accounts. No data collected.</li>
+        <li>Easy and Medium levels free forever</li>
+      </ul>
+      <a href="https://apps.apple.com/us/app/tekimei-math/id6761586288" class="btn">
+        Download Free on the App Store →
+      </a>
+    </div>
+
+    <h2>Why no ads or accounts?</h2>
+
+    <p>Because your child's learning time should be focused on learning, not on ads. And your family's data is your own business.</p>
+
+    <p>I built Tekimei Math to work completely offline with no account required. You download it, you hand it to your kid, and they start learning. That's it.</p>
+
+    <h2>Who is it for?</h2>
+
+    <p>Tekimei Math is designed for kids ages 5–12. It works great as a daily supplement whether your child is in public school, private school, or homeschooled. Parents who want their kids to get ahead in math — or catch up — will find the structured curriculum especially useful.</p>
+
+    <p>Homeschool families in particular have told me they love having a structured math tool that maps to a real curriculum progression, rather than random practice that goes nowhere.</p>
+
+    <h2>Try it free today</h2>
+
+    <p>Easy and Medium levels are completely free — no time limit, no account needed. If you want to unlock Hard difficulty and Lightning Round mode, there's a one-time $2.99 upgrade. No subscriptions, ever.</p>
+
+    <p>I'd love for you to try it and let me know what you think. Every piece of feedback I've received has made the app better, and I read every message at <a href="mailto:hello@tekimei.com">hello@tekimei.com</a>.</p>
+
+    <div class="author-box">
+      <div class="author-avatar">明</div>
+      <div class="author-info">
+        <h4>Mike Chan</h4>
+        <p>San Mateo dad, founder of Tekimei Inc., and developer of Tekimei Math. UC Berkeley and Santa Clara Law grad. Built this app because his own kids deserved better than what was out there.</p>
+      </div>
+    </div>
+
+    <a href="/blog" class="back-link">← Back to Blog</a>
+
+  </div>
+</article>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="nav-kanji">明</span>
+      <span class="nav-name">Tekimei Math</span>
+      <p>Smart math practice for kids. Built on a structured curriculum. Free to start.</p>
+    </div>
+    <div class="footer-col">
+      <h4>App</h4>
+      <ul>
+        <li><a href="/#how">How It Works</a></li>
+        <li><a href="/#curriculum">Curriculum</a></li>
+        <li><a href="/#pricing">Pricing</a></li>
+        <li><a href="https://apps.apple.com/us/app/tekimei-math/id6761586288">Download</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="/privacy.html">Privacy Policy</a></li>
+        <li><a href="/support.html">Support</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="mailto:hello@tekimei.com">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Tekimei. All rights reserved.</p>
+    <div style="display:flex;gap:20px;">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/support.html">Support</a>
+      <a href="mailto:hello@tekimei.com">hello@tekimei.com</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
